@@ -3,17 +3,13 @@ import { Image } from 'astro:assets';
 
 // Importamos las imágenes locales desde src/assets
 // Asegúrate de que estos archivos existan en tu carpeta src/assets/
-import heroImage1 from '../assets/1.jpg';
-import heroImage2 from '../assets/2.jpg';
-import heroImage3 from '../assets/3.jpg';
-import heroImage4 from '../assets/4.jpg';
-import heroImage5 from '../assets/5.jpg';
+
 import heroImage6 from '../assets/6.jpg';
 import heroImage7 from '../assets/7.jpg';
 import heroImage8 from '../assets/8.jpg';
 
 
-const slides = [heroImage1, heroImage2, heroImage3, heroImage4, heroImage5, heroImage6, heroImage7, heroImage8];
+const slides = [heroImage6, heroImage7, heroImage8];
 ---
 
 <section class="relative h-screen w-full flex items-center justify-center bg-black overflow-hidden">
@@ -27,28 +23,28 @@ const slides = [heroImage1, heroImage2, heroImage3, heroImage4, heroImage5, hero
       >
         <Image 
           src={slide} 
-          class="w-full h-full object-cover opacity-60" 
+          class="w-full h-full object-cover" 
           alt={`Entre Hojas paisaje ${index + 1}`}
           quality="high"
           loading={index === 0 ? "eager" : "lazy"}
         />
       </div>
     ))}
-    <!-- Overlay adicional para asegurar legibilidad del texto -->
-    <div class="absolute inset-0 bg-black/20"></div>
+    <!-- Overlay con degradado para mejorar la legibilidad del texto -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/80"></div>
   </div>
 
   <!-- Contenido de Texto -->
-  <div class="relative z-10 text-center px-4">
-    <h1 class="text-6xl md:text-8xl font-black text-white uppercase italic tracking-tighter animate-fade-up">
+  <div class="relative z-10 text-center px-4 max-w-7xl mx-auto">
+    <h1 class="text-4xl sm:text-6xl md:text-8xl font-black text-white uppercase italic tracking-tighter animate-fade-up text-shadow-xl leading-tight">
       Tu Alojamiento <br />
-<span class="text-[#2B5432] block md:inline">Boutique Sustentable</span>
+      <span class="text-green-200 block md:inline text-shadow-xl mt-2 md:mt-0">Boutique Sustentable</span>
     </h1>
-    <p class="text-gray-200 mt-6 text-xl md:text-2xl font-light animate-fade-up delay-200 max-w-2xl mx-auto">
+    <p class="text-gray-100 mt-4 md:mt-6 text-lg md:text-2xl font-light animate-fade-up delay-200 max-w-2xl mx-auto drop-shadow-md">
       Desconectá de la rutina y conectá con la naturaleza en nuestras unidades exclusivas.
     </p>
     <div class="flex flex-col md:flex-row items-center justify-center gap-0 md:gap-8 animate-fade-up delay-300">
-      <a href="/productos" class="mt-8 inline-block bg-[#2B5432] text-white font-bold py-4 px-10 rounded-full hover:bg-orange-600 transition-transform hover:scale-105 uppercase tracking-widest shadow-lg">
+      <a href="/productos" class="mt-8 inline-block bg-[#2B5432] text-white font-bold py-4 px-10 rounded-full hover:bg-white hover:text-[#2B5432] transition-transform hover:scale-105 uppercase tracking-widest shadow-lg">
         Ver Unidades
       </a>
       <a href="/contacto" class="mt-8 inline-block bg-white text-black font-bold py-4 px-10 rounded-full hover:bg-gray-100 transition-transform hover:scale-105 uppercase tracking-widest shadow-lg">
