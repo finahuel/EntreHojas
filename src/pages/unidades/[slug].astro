@@ -1,0 +1,99 @@
+---
+import { Image } from 'astro:assets';
+import Layout1 from '../../layouts/layout1.astro';
+import Navbar from '../../components/Navbar.astro';
+import WhatsAppButton from '../../components/WhatsAppButton.astro';
+import { unidades, type Unidad } from '../../data/unidades';
+
+// 1. La función `getStaticPaths` le dice a Astro qué páginas generar.
+// Se ejecutará una vez por cada unidad en nuestros datos.
+export async function getStaticPaths() {
+  return unidades.map(unidad => ({
+    params: { slug: unidad.id }, // El `slug` en la URL coincidirá con el `id` de la unidad.
+    props: { unidad }, // Pasamos todos los datos de la unidad a la página.
+  }));
+}
+
+// 2. Obtenemos los datos de la unidad específica para esta página.
+const { unidad } = Astro.props as { unidad: Unidad };
+
+const { 
+  nombre, 
+  descripcionLarga, 
+  imagenes, 
+  capacidad, 
+  amenidades, 
+  precio 
+} = unidad;
+---
+
+<Layout1 title={`${nombre} | Entre Hojas`}>
+  <!-- Fondo oscuro para el Navbar, que es transparente al inicio -->
+  <div class="absolute top-0 left-0 w-full h-20 bg-gray-900 z-40"></div>
+  <Navbar title="Entre Hojas" />
+
+  <main class="pt-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+      <!-- Encabezado: Nombre y Precio -->
+      <div class="mb-8 md:flex md:justify-between md:items-center">
+        <div>
+          <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight">{nombre}</h1>
+          <div class="mt-2 flex items-center gap-2 text-gray-500">
+            <i class="ph ph-users text-xl"></i>
+            <span>Capacidad para {capacidad} personas</span>
+          </div>
+        </div>
+        <div class="mt-4 md:mt-0 text-left md:text-right">
+          <span class="text-gray-500 text-sm">Desde</span>
+          <p class="text-4xl font-bold text-gray-900">${precio}<span class="text-lg font-normal text-gray-500">/noche</span></p>
+        </div>
+      </div>
+
+      <!-- Galería de Imágenes con diseño destacado -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+        {imagenes.map((img, index) => (
+          <div class:list={[
+            "overflow-hidden rounded-xl shadow-lg",
+            { 'col-span-2 row-span-2': index === 0 && imagenes.length > 1 }, // La primera imagen es más grande si hay más de una
+          ]}>
+            <Image 
+              src={img} 
+              alt={`Foto ${index + 1} de ${nombre}`}
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              quality="high"
+            />
+          </div>
+        ))}
+      </div>
+
+      <!-- Contenido: Descripción y Amenidades -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div class="lg:col-span-2">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Sobre esta unidad</h2>
+          <p class="text-gray-600 leading-relaxed whitespace-pre-line">{descripcionLarga}</p>
+        </div>
+        
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">¿Qué ofrecemos?</h2>
+          <ul class="space-y-3">
+            {amenidades.map(amenidad => (
+              <li class="flex items-center gap-3">
+                <div class="w-6 h-6 flex items-center justify-center bg-green-100 rounded-full">
+                  <i class="ph ph-check text-green-800 font-bold"></i>
+                </div>
+                <span class="text-gray-700">{amenidad}</span>
+              </li>
+            ))}
+          </ul>
+          <a href={`https://wa.me/5493764102637?text=Hola!%20Quisiera%20reservar%20la%20unidad%20'${nombre}'`} target="_blank" class="mt-8 w-full text-center bg-[#2B5432] text-white font-bold py-3 px-6 rounded-full hover:bg-white hover:text-[#2B5432] border-2 border-transparent hover:border-[#2B5432] transition-all duration-300 inline-block">
+            Reservar Ahora
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <WhatsAppButton phone="5493764102637" message={`Hola!%20Tengo%20una%20consulta%20sobre%20la%20unidad%20'${nombre}'.`} />
+</Layout1>

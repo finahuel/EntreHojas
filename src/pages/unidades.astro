@@ -1,0 +1,56 @@
+---
+import Layout1 from '../layouts/layout1.astro';
+import Navbar from '../components/Navbar.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import UnidadCard from '../components/UnidadCard.astro';
+import { unidades } from '../data/unidades';
+
+// URL de la imagen de fondo del encabezado
+const HEADER_BG_IMAGE = "https://images.unsplash.com/photo-1585551695434-8c11c6e48226?q=80&w=2070&auto=format&fit=crop";
+---
+
+<Layout1 title="Nuestras Unidades | Entre Hojas">
+  <Navbar title="Entre Hojas"/>
+  
+  <!-- Encabezado con Imagen de Fondo -->
+  <div class="relative bg-gray-900 py-24 sm:py-32">
+    <div class="absolute inset-0 overflow-hidden">
+      <img 
+        src={HEADER_BG_IMAGE} 
+        alt="Paisaje natural de fondo" 
+        class="h-full w-full object-cover object-center opacity-40"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/70"></div>
+    </div>
+
+    <div class="relative mx-auto max-w-7xl px-6 lg:px-8 text-center">
+      <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-6xl uppercase italic">
+        Unidades Exclusivas
+      </h1>
+      <p class="mt-4 text-lg leading-8 text-gray-300">
+        Descubrí el refugio perfecto para tu próxima escapada en la naturaleza.
+      </p>
+    </div>
+  </div>
+
+  <section class="bg-gray-50 py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {
+        unidades.map((unidad) => (
+          <UnidadCard 
+            id={unidad.id}
+            nombre={unidad.nombre}
+            descripcion={unidad.descripcion}
+            imagen={unidad.imagenPrincipal}
+            capacidad={unidad.capacidad}
+            amenidades={unidad.amenidades}
+            precio={unidad.precio}
+          />
+        ))
+      }
+      </div>
+    </div>
+  </section>
+  <WhatsAppButton phone="5493764102637" message="Hola! Quisiera consultar sobre las unidades de alojamiento." />
+</Layout1>

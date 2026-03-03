@@ -1,0 +1,62 @@
+---
+import { Image } from 'astro:assets';
+
+export interface Props {
+  id: string | number;
+  nombre: string;
+  descripcion: string;
+  imagen: ImageMetadata;
+  capacidad: number | string;
+  amenidades: string[];
+  precio: number;
+}
+
+const { id, nombre, descripcion, imagen, capacidad, amenidades, precio } = Astro.props;
+---
+
+<div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col group">
+  <a href={`/unidades/${id}`} class="block overflow-hidden">
+    <Image 
+      src={imagen} 
+      alt={`Foto de la unidad ${nombre}`}
+      class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
+      quality="mid"
+    />
+  </a>
+  <div class="p-6 flex flex-col flex-grow">
+    <div class="flex-grow">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="text-xl font-bold text-gray-800">
+          <a href={`/unidades/${id}`} class="hover:text-[#2B5432] transition-colors">{nombre}</a>
+        </h3>
+        <div class="flex items-center gap-1 text-gray-600" title={`Capacidad para ${capacidad} personas`}>
+          <i class="ph ph-users text-xl"></i>
+          <span class="font-semibold">{capacidad}</span>
+        </div>
+      </div>
+      <p class="text-gray-600 mb-4 line-clamp-2">{descripcion}</p>
+      
+      <div class="mb-4">
+        <h4 class="font-semibold text-sm text-gray-500 mb-2">Incluye:</h4>
+        <div class="flex flex-wrap gap-2">
+          {amenidades.slice(0, 4).map((amenidad) => (
+            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{amenidad}</span>
+          ))}
+          {amenidades.length > 4 && (
+            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">+{amenidades.length - 4} más</span>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-auto pt-4 border-t border-gray-100 flex justify-between items-center">
+      <div>
+        <span class="text-gray-500 text-sm">Desde</span>
+        <p class="text-2xl font-bold text-gray-900">${precio}<span class="text-sm font-normal text-gray-500">/noche</span></p>
+      </div>
+      <a href={`/unidades/${id}`} class="bg-[#2B5432] text-white font-bold py-2 px-5 rounded-full hover:bg-white hover:text-[#2B5432] border-2 border-transparent hover:border-[#2B5432] transition-all duration-300">
+        Ver Más
+      </a>
+    </div>
+  </div>
+</div>

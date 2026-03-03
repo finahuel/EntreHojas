@@ -4,7 +4,20 @@ import Navbar from '../components/Navbar.astro';
 import Hero from '../components/Hero.astro';
 import Testimonios from '../components/Testimonios.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
+import UnidadCard from '../components/UnidadCard.astro';
+import { unidades } from '../data/unidades';
 
+// Función para barajar un array (algoritmo de Fisher-Yates)
+function shuffle(array: any[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Seleccionamos 3 unidades al azar para mostrar en la página de inicio
+const unidadesDestacadas = shuffle([...unidades]).slice(0, 3);
 ---
 
 <Layout1 title="Entre Hojas | Inicio">
@@ -19,7 +32,7 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
     <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 ">
       <div class="text-center mb-12">
         <h2 class="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-          Nuestras Unidades
+          Nuestras Unidades Mas Elegidas
         </h2>
         <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
           Espacios diseñados para tu confort y conexión con la naturaleza.
@@ -27,42 +40,17 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
       </div>
 
       <div class="grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 gap-x-6">
-        <!-- Placeholder de Unidad 1 -->
-        <div class="group relative bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-lg transition-all">
-          <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200 h-64">
-             <!-- Puedes poner una imagen real aquí luego -->
-             <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">Imagen Unidad</div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-900">Cabaña del Bosque</h3>
-            <p class="mt-2 text-gray-500 text-sm">Ideal para parejas. Vista panorámica.</p>
-            <p class="mt-4 text-orange-600 font-bold">Consultar disponibilidad</p>
-          </div>
-        </div>
-
-        <!-- Placeholder de Unidad 2 -->
-        <div class="group relative bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-lg transition-all">
-          <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200 h-64">
-             <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">Imagen Unidad</div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-900">Suite Mirador</h3>
-            <p class="mt-2 text-gray-500 text-sm">Espacio amplio con jacuzzi y terraza.</p>
-            <p class="mt-4 text-orange-600 font-bold">Consultar disponibilidad</p>
-          </div>
-        </div>
-
-         <!-- Placeholder de Unidad 3 -->
-         <div class="group relative bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-lg transition-all">
-          <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200 h-64">
-             <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">Imagen Unidad</div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-900">Domo Glamping</h3>
-            <p class="mt-2 text-gray-500 text-sm">Experiencia inmersiva bajo las estrellas.</p>
-            <p class="mt-4 text-orange-600 font-bold">Consultar disponibilidad</p>
-          </div>
-        </div>
+        {unidadesDestacadas.map(unidad => (
+          <UnidadCard 
+            id={unidad.id}
+            nombre={unidad.nombre}
+            descripcion={unidad.descripcion}
+            imagen={unidad.imagenPrincipal}
+            capacidad={unidad.capacidad}
+            amenidades={unidad.amenidades}
+            precio={unidad.precio}
+          />
+        ))}
       </div>
     </div>
   </div>
