@@ -21,19 +21,19 @@ const { title = "Entre Hojas" } = Astro.props;
         <div class="hidden md:flex items-center space-x-8">
           <a
             href={import.meta.env.BASE_URL}
-            class="text-white/90 nav-text hover:text-[#2B5432] font-medium transition"
+            class="text-white/90 nav-text hover:text-green-300 font-medium transition"
           >
             Inicio
           </a>
           <a
             href={import.meta.env.BASE_URL + "unidades"}
-            class="text-white/90 nav-text hover:text-[#2B5432] font-medium transition"
+            class="text-white/90 nav-text hover:text-green-300 font-medium transition"
           >
             Unidades
           </a> 
           <a
             href={import.meta.env.BASE_URL + "contacto"}
-            class="text-white/90 nav-text hover:text-[#2B5432] font-medium transition"
+            class="text-white/90 nav-text hover:text-green-300 font-medium transition"
           >
             Contacto
           </a>
@@ -135,7 +135,7 @@ const { title = "Entre Hojas" } = Astro.props;
 <style>
   /* Estilo para cuando se hace scroll */
   .nav-scrolled {
-    background-color: rgba(36, 36, 37, 0.85); /* Fondo oscuro translúcido */
+    background-color: rgba(43, 84, 50, 0.85); /* Fondo verde oscuro translúcido */
     backdrop-filter: blur(12px); /* Efecto de desenfoque (Glassmorphism) */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     padding-top: 1rem !important; /* Reducimos un poco el padding para que sea más compacto */

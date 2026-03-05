@@ -1,12 +1,15 @@
 ---
+import { Image } from 'astro:assets';
 import Layout1 from '../layouts/layout1.astro';
 import Navbar from '../components/Navbar.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
 import UnidadCard from '../components/UnidadCard.astro';
 import { unidades } from '../data/unidades';
+import monte from '../assets/montemisionero.webp';
+
 
 // URL de la imagen de fondo del encabezado
-const HEADER_BG_IMAGE = "https://images.unsplash.com/photo-1585551695434-8c11c6e48226?q=80&w=2070&auto=format&fit=crop";
+const HEADER_BG_IMAGE = monte;
 ---
 
 <Layout1 title="Nuestras Unidades | Entre Hojas">
@@ -15,8 +18,8 @@ const HEADER_BG_IMAGE = "https://images.unsplash.com/photo-1585551695434-8c11c6e
   <!-- Encabezado con Imagen de Fondo -->
   <div class="relative bg-gray-900 py-24 sm:py-32">
     <div class="absolute inset-0 overflow-hidden">
-      <img 
-        src={HEADER_BG_IMAGE} 
+      <Image 
+        src={monte}
         alt="Paisaje natural de fondo" 
         class="h-full w-full object-cover object-center opacity-40"
       />

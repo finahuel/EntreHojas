@@ -1,28 +1,38 @@
 ---
+import { Image } from 'astro:assets';
 import Layout1 from '../layouts/layout1.astro';
 import Navbar from '../components/Navbar.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
+import montecontacto from '../assets/montecontacto.webp';
 ---
 
 <Layout1 title="Contacto | Entre Hojas">
-  <!-- Fondo oscuro simulado detrás del navbar para contraste -->
-  <div class="absolute top-0 left-0 w-full h-20 bg-gray-900 z-40"></div>
   <Navbar title="Entre Hojas" />
 
-  <main class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-    
-    <!-- Título de la página -->
-    <div class="text-center mb-12">
-      <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-        Ponete en Contacto
-      </h1>
-      <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
-        Estamos para ayudarte. Visitá nuestro local o envianos un mensaje.
-      </p>
+  <!-- Encabezado con Imagen de Fondo -->
+  <div class="relative bg-gray-900 py-24 sm:py-32">
+    <div class="absolute inset-0 overflow-hidden">
+      <Image 
+        src={montecontacto}
+        alt="Paisaje de contacto de fondo" 
+        class="h-full w-full object-cover object-center opacity-40"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/70"></div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16">
-      
+    <div class="relative mx-auto max-w-7xl px-6 lg:px-8 text-center">
+      <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-6xl uppercase italic">
+        Ponete en Contacto
+      </h1>
+      <p class="mt-4 text-lg leading-8 text-gray-300">
+        Estamos para ayudarte. Envianos un mensaje o visitanos.
+      </p>
+    </div>
+  </div>
+
+  <main class="bg-gray-50 py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16">
       <!-- Columna Izquierda: Información de Contacto -->
       <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
         <h2 class="text-2xl font-bold text-gray-900 mb-6">Información</h2>
@@ -100,7 +110,7 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
           title="Ubicación de Entre Hojas"
         ></iframe>
       </div>
-
+      </div>
     </div>
   </main>
 
