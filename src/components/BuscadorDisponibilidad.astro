@@ -1,0 +1,130 @@
+---
+// src/components/BuscadorDisponibilidad.astro
+import type { Unidad } from '../data/unidades';
+
+interface Props {
+  unidades: Unidad[];
+}
+
+const { unidades } = Astro.props;
+
+// La URL del script de Apps se obtiene de las variables de entorno
+const APPS_SCRIPT_URL = import.meta.env.PUBLIC_APPS_SCRIPT_URL;
+---
+
+<div id="buscador-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg max-w-4xl mx-auto -mt-16 relative z-10 border border-gray-100">
+  <form id="search-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+    <div class="flex flex-col">
+      <label for="check-in" class="text-sm font-semibold text-gray-600 mb-1">Check-in</label>
+      <input type="date" id="check-in" name="check-in" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2B5432] focus:border-[#2B5432] transition">
+    </div>
+    <div class="flex flex-col">
+      <label for="check-out" class="text-sm font-semibold text-gray-600 mb-1">Check-out</label>
+      <input type="date" id="check-out" name="check-out" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2B5432] focus:border-[#2B5432] transition">
+    </div>
+    <div class="flex flex-col">
+      <label for="huespedes" class="text-sm font-semibold text-gray-600 mb-1">Huéspedes</label>
+      <input type="number" id="huespedes" name="huespedes" min="1" value="2" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2B5432] focus:border-[#2B5432] transition">
+    </div>
+    <button type="submit" class="bg-[#2B5432] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#24472a] transition-all duration-300 md:col-span-1 h-[50px]">
+      Buscar
+    </button>
+  </form>
+
+  <div id="results-container" class="mt-8">
+    <!-- Los resultados de la búsqueda se insertarán aquí dinámicamente -->
+  </div>
+  <div id="loading-indicator" class="hidden text-center mt-8">
+    <p class="text-gray-600 animate-pulse">Buscando disponibilidad...</p>
+  </div>
+  <div id="error-message" class="hidden text-center mt-8 p-4 bg-red-100 text-red-700 rounded-lg">
+    <!-- Mensajes de error aparecerán aquí -->
+  </div>
+</div>
+
+<script define:vars={{ APPS_SCRIPT_URL }}>
+  const form = document.getElementById('search-form');
+  const resultsContainer = document.getElementById('results-container');
+  const loadingIndicator = document.getElementById('loading-indicator');
+  const errorMessage = document.getElementById('error-message');
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    
+    // Aseguramos que la lista completa sea visible antes de filtrar
+    const allUnitsContainer = document.getElementById('lista-unidades-completa');
+    if (allUnitsContainer) {
+      allUnitsContainer.classList.remove('hidden');
+    }
+
+    resultsContainer.innerHTML = '';
+    errorMessage.classList.add('hidden');
+    loadingIndicator.classList.remove('hidden');
+
+    const formData = new FormData(form);
+    const checkIn = formData.get('check-in');
+    const checkOut = formData.get('check-out');
+    const huespedes = parseInt(formData.get('huespedes'), 10);
+
+    if (new Date(checkOut) <= new Date(checkIn)) {
+      return showError('La fecha de Check-out debe ser posterior a la de Check-in.');
+    }
+    if (!APPS_SCRIPT_URL) {
+      return showError('La URL de la API no está configurada. Revisa las variables de entorno.');
+    }
+
+    try {
+      const apiUrl = `${APPS_SCRIPT_URL}?check_in=${checkIn}&check_out=${checkOut}`;
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error('Error de red al consultar disponibilidad.');
+      
+      const data = await response.json();
+      const bookedIds = data.booked_ids || [];
+
+      // Seleccionamos todas las tarjetas del DOM
+      const cards = document.querySelectorAll('.unidad-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const unitId = card.dataset.unitId;
+        const capAttr = card.dataset.unitCapacidad;
+        
+        // Parseamos la capacidad (maneja números simples "4" o rangos "5-7")
+        const maxCapacidad = capAttr.includes('-') 
+          ? parseInt(capAttr.split('-')[1], 10) 
+          : parseInt(capAttr, 10);
+
+        const isBooked = bookedIds.includes(unitId);
+        const isCapacityOk = huespedes <= maxCapacidad;
+
+        if (!isBooked && isCapacityOk) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      loadingIndicator.classList.add('hidden');
+      
+      if (visibleCount === 0) {
+        resultsContainer.innerHTML = '<p class="text-center text-gray-600">No se encontraron unidades disponibles para las fechas y capacidad seleccionadas.</p>';
+        // Opcional: Si no hay resultados, podríamos ocultar el contenedor principal para que se vea limpio
+        // if (allUnitsContainer) allUnitsContainer.classList.add('hidden');
+      }
+    } catch (error) {
+      console.error('Error en la búsqueda:', error);
+      showError('No se pudo completar la búsqueda. Por favor, inténtalo de nuevo más tarde.');
+    }
+  });
+
+  function showError(message) {
+    loadingIndicator.classList.add('hidden');
+    errorMessage.textContent = message;
+    errorMessage.classList.remove('hidden');
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('check-in').setAttribute('min', today);
+  document.getElementById('check-out').setAttribute('min', today);
+</script>

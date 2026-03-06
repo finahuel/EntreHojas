@@ -87,6 +87,13 @@ const { title = "Entre Hojas" } = Astro.props;
 </nav>
 
 <script>
+  declare global {
+    interface Window {
+      toggleMobileMenu: () => void;
+      closeMobileMenu: () => void;
+    }
+  }
+
   function toggleMobileMenu() {
     const menu = document.getElementById("mobileMenu");
     const iconOpen = document.getElementById("menuIconOpen");

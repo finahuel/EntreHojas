@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Layout1 from '../layouts/layout1.astro';
 import Navbar from '../components/Navbar.astro';
+import BuscadorDisponibilidad from '../components/BuscadorDisponibilidad.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
 import UnidadCard from '../components/UnidadCard.astro';
 import { unidades } from '../data/unidades';
@@ -15,7 +16,7 @@ const HEADER_BG_IMAGE = monte;
 <Layout1 title="Nuestras Unidades | Entre Hojas">
   <Navbar title="Entre Hojas"/>
   
-  <!-- Encabezado con Imagen de Fondo -->
+  <!-- Encabezado con Imagen de Fondo y Buscador -->
   <div class="relative bg-gray-900 py-24 sm:py-32">
     <div class="absolute inset-0 overflow-hidden">
       <Image 
@@ -23,7 +24,7 @@ const HEADER_BG_IMAGE = monte;
         alt="Paisaje natural de fondo" 
         class="h-full w-full object-cover object-center opacity-40"
       />
-      <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/70"></div>
+      <div class="absolute inset-0 bg-linear-to-b from-black/10 via-black/30 to-black/70"></div>
     </div>
 
     <div class="relative mx-auto max-w-7xl px-6 lg:px-8 text-center">
@@ -36,8 +37,11 @@ const HEADER_BG_IMAGE = monte;
     </div>
   </div>
 
+  <!-- El componente Buscador se renderiza aquí, debajo del header -->
+  <BuscadorDisponibilidad unidades={unidades} />
+
   <section class="bg-gray-50 py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto">
+    <div id="lista-unidades-completa" class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {
         unidades.map((unidad) => (
