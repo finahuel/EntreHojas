@@ -52,6 +52,15 @@ const unidadesDestacadas = shuffle([...unidades]).slice(0, 3);
           />
         ))}
       </div>
+
+      <div class="mt-12 text-center">
+        <a href={import.meta.env.BASE_URL + "unidades"} class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-[#2B5432] hover:bg-[#234429] transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+          Ver todas las unidades
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
     </div>
   </div>
 
