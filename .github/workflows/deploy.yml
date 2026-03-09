@@ -25,8 +25,10 @@ jobs:
       - name: Install, build, and upload your site
         uses: withastro/action@v2
         # with:
-          # path: . # Descomenta si tu proyecto no está en la raíz
-          # node-version: 20 # Descomenta si necesitas una versión específica de Node
+          # path: . 
+          # node-version: 20
+        env:
+          PUBLIC_APPS_SCRIPT_URL: ${{ secrets.PUBLIC_APPS_SCRIPT_URL }}
 
   deploy:
     needs: build

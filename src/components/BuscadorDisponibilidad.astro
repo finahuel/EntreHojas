@@ -10,25 +10,41 @@ const { unidades } = Astro.props;
 
 // La URL del script de Apps se obtiene de las variables de entorno
 const APPS_SCRIPT_URL = import.meta.env.PUBLIC_APPS_SCRIPT_URL;
+const BASE_URL = import.meta.env.BASE_URL;
 ---
 
-<div id="buscador-container" class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl max-w-4xl mx-6 md:mx-auto -mt-12 md:-mt-16 relative z-10 border border-gray-100">
-  <form id="search-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 items-end">
-    <div class="flex flex-col">
-      <label for="check-in" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Check-in</label>
-      <input type="date" id="check-in" name="check-in" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B5432] focus:border-[#2B5432] transition outline-none text-gray-700">
+<!-- Para implementar el selector de rango de fechas, añadimos Litepicker desde un CDN. -->
+<!-- En un proyecto real, sería ideal añadir esto en el <head> del layout principal (src/layouts/layout1.astro) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
+<script is:inline src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+
+<div id="buscador-container" class="bg-white px-6 pt-6 pb-4 rounded-3xl shadow-2xl max-w-3xl mx-6 md:mx-auto -mt-16 relative z-10 border border-gray-100">
+  <form id="search-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+    <div class="flex flex-col md:col-span-2">
+      <label for="date-range-picker" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Check-in & Check-out</label>
+      <div class="relative flex items-center">
+        <input type="text" id="date-range-picker" name="date-range" required placeholder="Selecciona un rango de fechas" class="w-full p-3 pr-10 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B5432] focus:border-[#2B5432] transition outline-none text-gray-700 cursor-pointer">
+        <i id="calendar-icon" class="ph ph-calendar absolute right-3 text-gray-500 text-xl cursor-pointer hover:text-[#2B5432] transition-colors"></i>
+      </div>
     </div>
-    <div class="flex flex-col">
-      <label for="check-out" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Check-out</label>
-      <input type="date" id="check-out" name="check-out" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B5432] focus:border-[#2B5432] transition outline-none text-gray-700">
+
+    <div class="flex gap-4 md:col-span-2 items-end">
+        <div class="flex flex-col flex-grow">
+          <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Huéspedes</label>
+          <div class="relative flex items-center h-[50px] bg-gray-50 border border-gray-200 rounded-xl w-full">
+            <i class="ph ph-users text-gray-400 text-lg absolute left-3 pointer-events-none"></i>
+            <span id="huespedes-display" class="font-medium text-gray-800 text-base text-center flex-grow">2</span>
+            <div class="flex items-center gap-1 mr-2">
+                <button type="button" id="decrement-huespedes" class="w-8 h-8 rounded-full text-gray-600 hover:bg-gray-200 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#2B5432]"><i class="ph ph-minus"></i></button>
+                <button type="button" id="increment-huespedes" class="w-8 h-8 rounded-full text-gray-600 hover:bg-gray-200 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#2B5432]"><i class="ph ph-plus"></i></button>
+            </div>
+            <input type="hidden" id="huespedes" name="huespedes" value="2">
+          </div>
+        </div>
+        <button type="submit" title="Buscar" class="bg-[#2B5432] text-white font-bold rounded-xl hover:bg-[#24472a] hover:shadow-lg transition-all duration-300 h-[50px] w-[50px] flex-shrink-0 flex items-center justify-center">
+          <i class="ph ph-magnifying-glass text-lg"></i>
+        </button>
     </div>
-    <div class="flex flex-col">
-      <label for="huespedes" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Huéspedes</label>
-      <input type="number" id="huespedes" name="huespedes" min="1" value="2" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B5432] focus:border-[#2B5432] transition outline-none text-gray-700">
-    </div>
-    <button type="submit" class="bg-[#2B5432] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#24472a] hover:shadow-lg transition-all duration-300 md:col-span-1 h-[50px] w-full">
-      Buscar 
-    </button>
   </form>
 
   <div id="results-container" class="mt-8">
@@ -42,33 +58,133 @@ const APPS_SCRIPT_URL = import.meta.env.PUBLIC_APPS_SCRIPT_URL;
   </div>
 </div>
 
-<script define:vars={{ APPS_SCRIPT_URL }}>
-  const form = document.getElementById('search-form');
-  const resultsContainer = document.getElementById('results-container');
-  const loadingIndicator = document.getElementById('loading-indicator');
-  const errorMessage = document.getElementById('error-message');
+<script define:vars={{ APPS_SCRIPT_URL, BASE_URL }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Leemos los parámetros directamente de la URL en el cliente. Este es un enfoque más robusto.
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialCheckIn = urlParams.get('check_in');
+    const initialCheckOut = urlParams.get('check_out');
+    const initialHuespedes = urlParams.get('huespedes');
 
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    
-    // Aseguramos que la lista completa sea visible antes de filtrar
-    const allUnitsContainer = document.getElementById('lista-unidades-completa');
-    if (allUnitsContainer) {
-      allUnitsContainer.classList.remove('hidden');
+    // Comprobamos si Litepicker se ha cargado. Si no, no podemos inicializar el componente.
+    if (typeof Litepicker === 'undefined') {
+      console.error('Error: La librería del calendario (Litepicker) no se ha podido cargar. Revisa la conexión a internet o posibles bloqueadores de scripts.');
+      const errorMessage = document.getElementById('error-message');
+      errorMessage.textContent = 'No se pudo cargar el calendario. Por favor, refresca la página.';
+      errorMessage.classList.remove('hidden');
+      return;
     }
 
+    const form = document.getElementById('search-form');
+    const resultsContainer = document.getElementById('results-container');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const errorMessage = document.getElementById('error-message');
+    const summaryContainer = document.getElementById('search-summary');
+    const calendarIcon = document.getElementById('calendar-icon');
+    const datePickerInput = document.getElementById('date-range-picker');
+
+    datePickerInput.addEventListener('keydown', (e) => e.preventDefault());
+
+    const picker = new Litepicker({
+      element: datePickerInput,
+      singleMode: false,
+      minDate: new Date(),
+      format: 'DD/MM/YYYY',
+      lang: 'es-ES',
+      buttonText: {
+        previousMonth: `<i class="ph ph-caret-left"></i>`,
+        nextMonth: `<i class="ph ph-caret-right"></i>`,
+      }
+    });
+
+    // Set initial dates if provided
+    if (initialCheckIn && initialCheckOut) {
+      // Parse YYYY-MM-DD strings into local Date objects to avoid timezone issues.
+      // This ensures Litepicker receives the dates in a reliable format.
+      const startArr = initialCheckIn.split('-').map(Number);
+      const endArr = initialCheckOut.split('-').map(Number);
+      const startDate = new Date(startArr[0], startArr[1] - 1, startArr[2]);
+      const endDate = new Date(endArr[0], endArr[1] - 1, endArr[2]);
+      picker.setDateRange(startDate, endDate);
+    }
+
+    calendarIcon.addEventListener('click', () => picker.show());
+
+    const huespedesDisplay = document.getElementById('huespedes-display');
+    const huespedesInput = document.getElementById('huespedes');
+    const incrementBtn = document.getElementById('increment-huespedes');
+    const decrementBtn = document.getElementById('decrement-huespedes');
+    const minHuespedes = 1;
+    
+    // Set initial guests if provided
+    if (initialHuespedes) {
+      huespedesInput.value = initialHuespedes;
+      huespedesDisplay.textContent = initialHuespedes;
+    }
+    
+    incrementBtn.addEventListener('click', () => {
+      let currentValue = parseInt(huespedesInput.value, 10);
+      currentValue++;
+      huespedesInput.value = currentValue.toString();
+      huespedesDisplay.textContent = currentValue.toString();
+    });
+
+    decrementBtn.addEventListener('click', () => {
+      let currentValue = parseInt(huespedesInput.value, 10);
+      if (currentValue > minHuespedes) {
+        currentValue--;
+        huespedesInput.value = currentValue.toString();
+        huespedesDisplay.textContent = currentValue.toString();
+      }
+    });
+
+    // Function to trigger form submission
+    const submitForm = () => {
+      form.dispatchEvent(new Event('submit', { cancelable: true }));
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      const huespedes = parseInt(huespedesInput.value, 10);
+      const startDate = picker.getStartDate();
+      const endDate = picker.getEndDate();
+
+      if (!startDate || !endDate) {
+        return showError('Por favor, selecciona un rango de fechas válido.');
+      }
+
+      const formatDateForAPI = (date) => {
+        return date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+      }
+      const checkIn = formatDateForAPI(startDate.toJSDate());
+      const checkOut = formatDateForAPI(endDate.toJSDate());
+
+      const allUnitsContainer = document.getElementById('lista-unidades-completa');
+      if (!allUnitsContainer) {
+        const params = new URLSearchParams({
+          check_in: checkIn,
+          check_out: checkOut,
+          huespedes: huespedes.toString(),
+        });
+
+        let unidadesUrl = BASE_URL;
+        if (!unidadesUrl.endsWith('/')) {
+          unidadesUrl += '/';
+        }
+        unidadesUrl += `unidades?${params.toString()}`;
+        
+        window.location.href = unidadesUrl;
+        return;
+      }
+
+    // --- Si estamos en la página de unidades, ejecutamos la lógica de filtrado ---
+    allUnitsContainer.classList.remove('hidden');
     resultsContainer.innerHTML = '';
+    if (summaryContainer) summaryContainer.classList.add('hidden');
     errorMessage.classList.add('hidden');
     loadingIndicator.classList.remove('hidden');
 
-    const formData = new FormData(form);
-    const checkIn = formData.get('check-in');
-    const checkOut = formData.get('check-out');
-    const huespedes = parseInt(formData.get('huespedes'), 10);
-
-    if (new Date(checkOut) <= new Date(checkIn)) {
-      return showError('La fecha de Check-out debe ser posterior a la de Check-in.');
-    }
     if (!APPS_SCRIPT_URL) {
       return showError('La URL de la API no está configurada. Revisa las variables de entorno.');
     }
@@ -107,24 +223,30 @@ const APPS_SCRIPT_URL = import.meta.env.PUBLIC_APPS_SCRIPT_URL;
 
       loadingIndicator.classList.add('hidden');
       
-      if (visibleCount === 0) {
+      if (visibleCount > 0) {
+        if (summaryContainer) {
+          const checkInStr = picker.getStartDate().format('DD/MM/YYYY');
+          const checkOutStr = picker.getEndDate().format('DD/MM/YYYY');
+          const huespedesCount = huespedesInput.value;
+          const huespedesText = parseInt(huespedesCount, 10) === 1 ? 'persona' : 'personas';
+
+          summaryContainer.innerHTML = `<p class="text-lg text-gray-700 font-medium">Unidades disponibles del <strong>${checkInStr}</strong> al <strong>${checkOutStr}</strong> para <strong>${huespedesCount}</strong> ${huespedesText}</p>`;
+          summaryContainer.classList.remove('hidden');
+        }
+      } else {
         resultsContainer.innerHTML = '<p class="text-center text-gray-600">No se encontraron unidades disponibles para las fechas y capacidad seleccionadas.</p>';
-        // Opcional: Si no hay resultados, podríamos ocultar el contenedor principal para que se vea limpio
-        // if (allUnitsContainer) allUnitsContainer.classList.add('hidden');
       }
     } catch (error) {
       console.error('Error en la búsqueda:', error);
       showError('No se pudo completar la búsqueda. Por favor, inténtalo de nuevo más tarde.');
     }
+    });
+
+    // Trigger search automatically if initial filters are present and we are on the units page
+    if (initialCheckIn && initialCheckOut && initialHuespedes && document.getElementById('lista-unidades-completa')) {
+      submitForm();
+    }
+
+    function showError(message) { loadingIndicator.classList.add('hidden'); errorMessage.textContent = message; errorMessage.classList.remove('hidden'); }
   });
-
-  function showError(message) {
-    loadingIndicator.classList.add('hidden');
-    errorMessage.textContent = message;
-    errorMessage.classList.remove('hidden');
-  }
-
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('check-in').setAttribute('min', today);
-  document.getElementById('check-out').setAttribute('min', today);
 </script>

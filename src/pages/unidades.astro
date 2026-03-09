@@ -11,6 +11,7 @@ import monte from '../assets/montemisionero.webp';
 
 // URL de la imagen de fondo del encabezado
 const HEADER_BG_IMAGE = monte;
+
 ---
 
 <Layout1 title="Nuestras Unidades | Entre Hojas">
@@ -42,6 +43,11 @@ const HEADER_BG_IMAGE = monte;
 
   <section class="bg-gray-50 py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
     <div id="lista-unidades-completa" class="max-w-7xl mx-auto">
+      <!-- Contenedor para el resumen de la búsqueda, se mostrará dinámicamente -->
+      <div id="search-summary" class="hidden text-center mb-12">
+        <!-- El resumen de la búsqueda aparecerá aquí -->
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {
         unidades.map((unidad) => (
