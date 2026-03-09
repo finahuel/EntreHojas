@@ -1,5 +1,7 @@
 ---
 import { Image } from 'astro:assets';
+import BuscadorDisponibilidad from './BuscadorDisponibilidad.astro';
+import type { Unidad } from '../data/unidades';
 
 // Importamos las imágenes locales desde src/assets
 // Asegúrate de que estos archivos existan en tu carpeta src/assets/
@@ -8,6 +10,11 @@ import heroImage6 from '../assets/6.jpg';
 import heroImage7 from '../assets/7.jpg';
 import heroImage8 from '../assets/8.jpg';
 
+interface Props {
+  unidades: Unidad[];
+}
+
+const { unidades } = Astro.props;
 
 const slides = [heroImage6, heroImage7, heroImage8];
 ---
@@ -43,13 +50,8 @@ const slides = [heroImage6, heroImage7, heroImage8];
     <p class="text-gray-100 mt-4 md:mt-6 text-lg md:text-2xl font-light animate-fade-up delay-200 max-w-2xl mx-auto drop-shadow-md">
       Desconectá de la rutina y conectá con la naturaleza en nuestras unidades exclusivas.
     </p>
-    <div class="flex flex-col md:flex-row items-center justify-center gap-0 md:gap-8 animate-fade-up delay-300">
-      <a href=`${import.meta.env.BASE_URL}unidades` class="mt-8 inline-block bg-[#2B5432] text-white font-bold py-4 px-10 rounded-full hover:bg-white hover:text-[#2B5432] transition-transform hover:scale-105 uppercase tracking-widest shadow-lg">
-        Ver Unidades
-      </a>
-      <a href=`${import.meta.env.BASE_URL}contacto` class="mt-8 inline-block bg-white text-black font-bold py-4 px-10 rounded-full hover:bg-gray-100 transition-transform hover:scale-105 uppercase tracking-widest shadow-lg">
-        Reservar
-      </a>
+    <div class="mt-20 animate-fade-up delay-300">
+      <BuscadorDisponibilidad unidades={unidades} />
     </div>
   </div>
 </section>
