@@ -39,7 +39,7 @@ const {
         alt={`Fondo de ${nombre}`} 
         class="h-full w-full object-cover object-center opacity-40"
       />
-      <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/70"></div>
+      <div class="absolute inset-0 bg-linear-to-b from-black/10 via-black/30 to-black/70"></div>
     </div>
 
     <div class="relative mx-auto max-w-7xl px-6 lg:px-8 text-center">
@@ -67,7 +67,6 @@ const {
               src={img} 
               alt={`Foto ${index + 1} de ${nombre}`}
               class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-              quality="high"
             />
           </div>
         ))}
@@ -85,14 +84,14 @@ const {
           <ul class="space-y-3">
             {amenidades.map(amenidad => (
               <li class="flex items-center gap-3">
-                <div class="w-6 h-6 flex items-center justify-center bg-green-100 rounded-full">
-                  <i class="ph ph-check text-green-800 font-bold"></i>
+                <div class="w-6 h-6 shrink-0 flex items-center justify-center bg-green-100 rounded-full">
+                  <i class="ph ph-check text-green-800 font-bold"></i> 
                 </div>
                 <span class="text-gray-700">{amenidad}</span>
               </li>
             ))}
           </ul>
-          <a href={`https://wa.me/5493764102637?text=Hola!%20Quisiera%20reservar%20la%20unidad%20'${nombre}'`} target="_blank" class="mt-8 w-full text-center bg-[#2B5432] text-white font-bold py-3 px-6 rounded-full hover:bg-white hover:text-[#2B5432] border-2 border-transparent hover:border-[#2B5432] transition-all duration-300 inline-block">
+          <a href={`https://wa.me/5493764102637?text=Hola!%20Quisiera%20reservar%20la%20unidad%20'${nombre}'`} target="_blank" rel="noopener noreferrer" class="mt-8 w-full text-center bg-[#2B5432] text-white font-bold py-3 px-6 rounded-full hover:bg-white hover:text-[#2B5432] border-2 border-transparent hover:border-[#2B5432] transition-all duration-300 inline-block">
             Reservar Ahora
           </a>
         </div>
