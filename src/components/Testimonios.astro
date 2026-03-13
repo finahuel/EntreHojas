@@ -171,7 +171,7 @@ const testimoniosInfinitos = [...testimonios, ...testimonios];
           scrollPosition = 0;
         }
         
-        track.style.transform = `translateX(-${scrollPosition}px)`;
+        if (track) track.style.transform = `translateX(-${scrollPosition}px)`;
       }
       requestAnimationFrame(animate);
     }
@@ -187,7 +187,7 @@ const testimoniosInfinitos = [...testimonios, ...testimonios];
     track.addEventListener('mouseleave', () => { if (!isDragging) isPaused = false; });
 
     // --- Lógica de Arrastre (Drag & Drop / Touch) ---
-    const startDrag = (e) => {
+    const startDrag = (e: any) => {
       isDragging = true;
       isPaused = true;
       startX = e.pageX || e.touches[0].pageX;
@@ -195,7 +195,7 @@ const testimoniosInfinitos = [...testimonios, ...testimonios];
       track.style.cursor = 'grabbing';
     };
 
-    const moveDrag = (e) => {
+    const moveDrag = (e: any) => {
       if (!isDragging) return;
       const currentX = e.pageX || e.touches[0].pageX;
       const diff = currentX - startX;
